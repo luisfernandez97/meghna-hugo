@@ -1,45 +1,48 @@
-{{"<!-- Fixed Navigation -->" | safeHTML}}
-<header id="navigation" class="navbar navigation">
-    <div class="container">
-        <div class="navbar-header">
-            {{"<!-- responsive nav button -->" | safeHTML}}
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            {{"<!-- /responsive nav button -->" | safeHTML}}
+<section class="sticky-top navigation">
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-dark">
+			<a class="navbar-brand p-0" href="{{ .Site.BaseURL | relLangURL }}">
+				{{ if site.Params.logo }}
+				<img class="lozad" data-src="{{ site.Params.logo | absURL }}" alt="{{ .Site.Title }}" height="42">
+				{{ else }}
+				{{ site.Title }}
+				{{ end }}
+			</a>
 
-            {{"<!-- logo -->" | safeHTML}}
-            <a class="navbar-brand logo" href="{{ .Site.BaseURL | absURL }}">
-                <img src="{{ .Site.Params.logo | absURL }}" alt="Logo" />
-            </a>
-            {{"<!-- /logo -->" | safeHTML}}
-        </div>
+			<button class="navbar-toggler rounded-0" type="button" data-toggle="collapse" data-target="#navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-        {{"<!-- main nav -->" | safeHTML}}
-        {{ if .IsHome }}        
-        <nav class="collapse navbar-collapse navbar-right" role="Navigation">
-                    <ul id="nav" class="nav navbar-nav navigation-menu">
-                        <li><a data-scroll href="#body">{{ with $.Site.Params.home }}{{ . }}{{ end }}</a></li>
-                        {{ range $.Site.Menus.nav }}
-                        <li><a data-scroll href="#{{ .URL }}">{{ .Name }}</a></li>
-                        {{ end }}
-                    </ul>
-                </nav>
-        {{ else }}
-        <nav class="collapse navbar-collapse navbar-right" role="Navigation">
-                    <ul id="nav" class="nav navbar-nav navigation-menu">
-                        <li><a data-scroll href="{{ $.Site.BaseURL }}#body">{{ with $.Site.Params.home }}{{ . }}{{ end }}</a></li>
-                        {{ range $.Site.Menus.nav }}
-                        <li><a data-scroll href="{{ $.Site.BaseURL }}#{{ .URL }}">{{ .Name }}</a></li>
-                        {{ end }}
-                    </ul>
-                </nav>
-        {{ end }}
-        {{"<!-- /main nav -->" | safeHTML}}
-
-    </div>
-</header>
-{{"<!-- End Fixed Navigation -->" | safeHTML}}
+			<div class="collapse navbar-collapse" id="navigation">
+				<ul class="navbar-nav ml-auto">
+					{{ range site.Menus.main }}
+					<li class="nav-item">
+            <a class="nav-link" href="{{if .Pre}}{{site.BaseURL | absLangURL}}{{.Pre}}{{ .URL }}{{else}}{{.URL | absLangURL}}{{end}}">{{ .Name }}</a>
+					</li>
+					{{ end }}
+				</ul>
+				<!-- Language List -->
+				{{- if site.IsMultiLingual }}
+				<select id="select-language" onchange="location = this.value;">
+					{{ $siteLanguages := site.Languages}}
+					{{ $pageLang := .Page.Lang}}
+					{{ range .Page.AllTranslations }}
+					{{ $translation := .}}
+					{{ range $siteLanguages }}
+					{{ if eq $translation.Lang .Lang }}
+					{{ $selected := false }}
+					{{ if eq $pageLang .Lang}}
+					<option id="{{ $translation.Language }}" value="{{ $translation.Permalink }}" selected>{{ .LanguageName }}
+					</option>
+					{{ else }}
+					<option id="{{ $translation.Language }}" value="{{ $translation.Permalink }}">{{ .LanguageName }}</option>
+					{{ end }}
+					{{ end }}
+					{{ end }}
+					{{ end }}
+				</select>
+				{{ end }}
+			</div>
+		</nav>
+	</div>
+</section>
